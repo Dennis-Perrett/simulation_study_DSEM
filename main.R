@@ -1,4 +1,4 @@
-setwd("/Users/dennisperrett/Documents/Uni/Semester 5/Research Seminar/Google Simulation Study")
+setwd("/Users/dennisperrett/Documents/Uni/Semester 5/Research Seminar/simulation_study_DSEM")
 
 library(mvtnorm)
 library(R2jags)
@@ -18,8 +18,8 @@ td   <- diag(3)*.25 # cond. var(y) -> res var
 #set core specific seed
 set.seed(1234)
 
-N <- 50 # Number of people
-Nt <- 100 # Number of time points
+N <- 20 # Number of people
+Nt <- 50 # Number of time points
 J <- dim(ly0)[1]
 
 length(mu0)
@@ -36,18 +36,24 @@ data <- list(
 )
 
 # Initial values
-initial_values <- list(list(
-  alpha = matrix(rep(0,N*J),N,J, byrow=T),
-  ly = rep(0,J),
-  ar = rep(0,N)
-
-))
+initial_values <- list(
+                      
+                       list(alpha = matrix(rep(0,N*J),N,J, byrow=T), ly = rep(0,J), ar = rep(0,N)),
+                       list(alpha = matrix(rep(2,N*J),N,J, byrow=T), ly = rep(2,J), ar = rep(2,N)),
+                       list(alpha = matrix(rep(1,N*J),N,J, byrow=T), ly = rep(1,J), ar = rep(1,N))
+                      
+                       
+                       )
 
 params <- c("alpha","ly","ar")
 
 #Note: Check working directory to find the model.file.
-fit.fa <- jags(data, inits=initial_values, params, model.file="model1.txt", n.chains=1, n.iter=45000,
-               n.burnin = 44000, n.thin=1)
+fit.fa <- jags(data, inits=initial_values, params, model.file="model1.txt", n.chains=3, n.iter=4500,
+               n.burnin = 100, n.thin=1)
+
+fit.fa
+
+traceplot(fit.fa)
 
 mean(fit.fa$BUGSoutput$sims.list$alpha)
 mean(fit.fa$BUGSoutput$sims.list$ar)
