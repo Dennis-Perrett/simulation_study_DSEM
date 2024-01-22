@@ -71,12 +71,17 @@ for (N.size in N.List){
       observed_data = dat1
     )
     
-    results[[as.character(N.size), as.character(T.size)]] <- jags(data, parameters.to.save=params, model.file="model1.txt", n.chains=7, n.iter=100,
-                                                                            n.burnin = 5, n.thin=15)
+    results[[as.character(N.size), as.character(T.size)]] <- jags(data, parameters.to.save=params, model.file="model1.txt", n.chains=7, n.iter=4000,
+                                                                            n.burnin = 2500, n.thin=15)
   }
 }
 
 
 results[["50","50"]]
 results[["50","25"]]
+
+
+# Save and load the file
+save(results, file = "results.rda")
+load("results.rda")
 
