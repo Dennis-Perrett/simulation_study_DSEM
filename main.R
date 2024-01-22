@@ -36,30 +36,47 @@ data <- list(
   observed_data = dat1
 )
 
-# Initial values
-initial_values <- list(
-  list(alpha = matrix(rnorm(N*J,0,1),N,J, byrow=T), ly = rnorm(J,0,1), ar = rnorm(N,0,2)),
-  list(alpha = matrix(rnorm(N*J,0,3),N,J, byrow=T), ly = rnorm(J,0,3), ar = rnorm(N,0,1))
-)
-
-params <- c("alpha","ly","ar")
+#################################
+# Test run 
+#################################
+params <- c("ly","ar")
 
 #Note: Check working directory to find the model.file.
-fit.fa <- jags(data,  parameters.to.save=params, model.file="model1.txt", n.chains=7, n.iter=8000,
+fit.fa <- jags(data,  parameters.to.save=params, model.file="model1.txt", n.chains=7, n.iter=1000,
                n.burnin = 100, n.thin=15)
 
 fit.fa
 
+########## Proper Stuff ##########
+
+N.List <- c(10,20,30,40,50)
+T.List <- c(25, 50, 100)
+
+# Create Storage Matrix
+results <- matrix(vector("list", length = 15),nrow=length(N.List),ncol=length(T.List))
+row.names(results) <- N.List
+colnames(results) <- T.List
+results
+
+# Run sim loop
+for (N.size in N.List){
+  for (T.size in T.List){
+    
+    dat1 <- gendata02(N.size,T.size,phi0,mu0,ar0,ly0,td)
+    
+    data <- list(
+      T = T.size,
+      N = N.size,
+      J = J,
+      observed_data = dat1
+    )
+    
+    results[[as.character(N.size), as.character(T.size)]] <- jags(data, parameters.to.save=params, model.file="model1.txt", n.chains=7, n.iter=100,
+                                                                            n.burnin = 5, n.thin=15)
+  }
+}
 
 
-
-
-mean(fit.fa$BUGSoutput$sims.list$alpha)
-mean(fit.fa$BUGSoutput$sims.list$ar)
-
-mean(fit.fa$BUGSoutput$mean$ar)
-var(fit.fa$BUGSoutput$mean$ar)
-mean(fit.fa$BUGSoutput$mean$alpha)
-
-
+results[["50","50"]]
+results[["50","25"]]
 

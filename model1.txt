@@ -1,15 +1,9 @@
 model {
 
     # Hyperpriors for subject-specific random effects
-    alpha_subject_sd ~ dgamma(0.5, 0.05)
-    ar_subject_sd ~ dgamma(0.5, 0.05)
-
-    # Subject-specific random effects
     
-     for (j in 1:J){ # for each item
-        alpha[j] ~ dnorm(0, alpha_subject_sd)
-      }
-      ar ~ dnorm(0, ar_subject_sd) # AR coefficient
+    ar_subject_sd ~ dgamma(0.5, 0.05)
+    ar ~ dnorm(0, ar_subject_sd) # AR coefficient
     
 
     tau ~ dgamma(0.5, 0.05)
@@ -41,7 +35,7 @@ model {
         for (i in 1:N) {
           for (j in 1:J){ # for each item
           
-            observed_data[i, t, j] ~ dnorm(alpha[j] + ly[j] * h[i, t] , 1)
+            observed_data[i, t, j] ~ dnorm(ly[j] * h[i, t] , 1)
   
             # Wellbeing is a AR
             
