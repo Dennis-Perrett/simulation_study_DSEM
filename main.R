@@ -42,8 +42,8 @@ data <- list(
 params <- c("ly","ar")
 
 #Note: Check working directory to find the model.file.
-fit.fa <- jags(data,  parameters.to.save=params, model.file="model1.txt", n.chains=7, n.iter=1000,
-               n.burnin = 100, n.thin=15)
+fit.fa <- jags(data,  parameters.to.save=params, model.file="model1.txt", n.chains=2, n.iter=3000,
+               n.burnin = 500, n.thin=1)
 
 fit.fa
 
@@ -71,8 +71,8 @@ for (N.size in N.List){
       observed_data = dat1
     )
     
-    results[[as.character(N.size), as.character(T.size)]] <- jags(data, parameters.to.save=params, model.file="model1.txt", n.chains=7, n.iter=4000,
-                                                                            n.burnin = 2500, n.thin=15)
+    results[[as.character(N.size), as.character(T.size)]] <- jags(data, parameters.to.save=params, model.file="model1.txt", n.chains=2, n.iter=1000,
+                                                                            n.burnin = 800, n.thin=15)
   }
 }
 
@@ -85,3 +85,43 @@ results[["50","25"]]
 save(results, file = "results.rda")
 load("results.rda")
 
+
+run.models <- function(reps=5,model.file, list.to.save.to = list(), N, NT ){
+  
+  start.length <- length(list.to.save.to)
+  
+  for (i in 1:reps){
+    print(paste0("Iteration: ", i,"/",reps,". Total: ", start.length + i,"/",start.length+reps))
+    dat1 <- gendata02(N.size,T.size,phi0,mu0,ar0,ly0,td)
+    
+    data <- list(
+      T = T.size,
+      N = N.size,
+      J = J,
+      observed_data = dat1
+    )
+    
+    res <- jags(data, parameters.to.save=params, model.file=model.file, n.chains=2, n.iter=3000,
+         n.burnin = 400, n.thin=1)
+    
+    
+    list.to.save.to <- c(list.to.save.to, list(res))
+    
+    
+    
+  }
+  
+  return(list.to.save.to)
+}
+
+res_10_25 <- run.models(reps=50, model.file = "model1.txt",N=10,NT=25)
+
+#res_5_5 <- run.models(reps=15, list.to.save.to = res_5_5, model.file = "model1.txt",N=5,NT=5)
+save(res_10_25,file="res_10_25.rda")
+
+res_10_25
+res_5_5[1]
+
+a <- list()
+a <- append(a,list(3))        
+a[1]
