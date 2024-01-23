@@ -1,5 +1,5 @@
 rm(list=ls())
-setwd("/Users/dennisperrett/Documents/Uni/Semester 5/Research Seminar/simulation_study_DSEM")
+#setwd("/Users/dennisperrett/Documents/Uni/Semester 5/Research Seminar/simulation_study_DSEM")
 
 library(mvtnorm)
 library(R2jags)
@@ -9,7 +9,8 @@ source("gen_data_version02.R")
 ##########################
 phi0 <- diag(1)*.7+.3 # cov(eta) # Per latent factor
 mu0  <- c(0)          # mean(eta). # Per Observed(?) factor
-ar0  <- c(.5)         # ar(1) structure # Per Latent Factor
+ar0  <- c(0.5)
+# ar(1) structure # Per Latent Factor
 
 # Factor loadings must conform with means and td (the conditional variance of the items)
 ly0  <- matrix(c(1,1,2),3,1,byrow=F) # factor loadings
@@ -37,13 +38,14 @@ data <- list(
 )
 
 #################################
-# Test run 
+# Test run
 #################################
 params <- c("ly","ar")
 
 #Note: Check working directory to find the model.file.
 fit.fa <- jags(data,  parameters.to.save=params, model.file="model1.txt", n.chains=2, n.iter=3000,
                n.burnin = 500, n.thin=1)
+
 
 fit.fa
 
@@ -61,16 +63,16 @@ results
 # Run sim loop
 for (N.size in N.List){
   for (T.size in T.List){
-    
+
     dat1 <- gendata02(N.size,T.size,phi0,mu0,ar0,ly0,td)
-    
+
     data <- list(
       T = T.size,
       N = N.size,
       J = J,
       observed_data = dat1
     )
-    
+
     results[[as.character(N.size), as.character(T.size)]] <- jags(data, parameters.to.save=params, model.file="model1.txt", n.chains=2, n.iter=1000,
                                                                             n.burnin = 800, n.thin=15)
   }
@@ -87,31 +89,32 @@ load("results.rda")
 
 
 run.models <- function(reps=5,model.file, list.to.save.to = list(), N, NT ){
-  
+
   start.length <- length(list.to.save.to)
-  
+
   for (i in 1:reps){
     print(paste0("Iteration: ", i,"/",reps,". Total: ", start.length + i,"/",start.length+reps))
     dat1 <- gendata02(N.size,T.size,phi0,mu0,ar0,ly0,td)
-    
+
     data <- list(
       T = T.size,
       N = N.size,
       J = J,
       observed_data = dat1
     )
-    
+
     res <- jags(data, parameters.to.save=params, model.file=model.file, n.chains=2, n.iter=3000,
          n.burnin = 400, n.thin=1)
-    
-    
+
+
     list.to.save.to <- c(list.to.save.to, list(res))
-    
-    
-    
+
+    if ((res%%5)==0){
+      save(List.to.save.to, file="results_cache.rda",force = TRUE)
+    }
   }
-  
-  return(list.to.save.to)
+
+  #return(list.to.save.to)
 }
 
 res_10_25 <- run.models(reps=50, model.file = "model1.txt",N=10,NT=25)
@@ -123,5 +126,5 @@ res_10_25
 res_5_5[1]
 
 a <- list()
-a <- append(a,list(3))        
+a <- append(a,list(3))
 a[1]
