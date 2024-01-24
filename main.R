@@ -55,7 +55,7 @@ fit.fa <- jags(data,  parameters.to.save=params, model.file="model1.txt", n.chai
 
 
 fit.fa
-traceplot(fit.fa)
+
 
 ########## Proper Stuff ##########
 
