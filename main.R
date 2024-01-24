@@ -66,7 +66,6 @@ T.List <- c(25, 50, 100)
 # We may need a few more, if for some reason the N.Effs are low for some samples. In this case, we would just delete these. 
 run.models(reps=5, model.file = "model1.txt",N=10,NT=100)
 
-source("utils.R")
 check.status("results_model1")
 
 # Check the saved results
