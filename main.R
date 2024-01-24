@@ -1,5 +1,6 @@
 rm(list=ls())
-setwd("/Users/philippholscher/Downloads/simulation_study_DSEM-main")
+#setwd("/Users/philippholscher/Downloads/simulation_study_DSEM-main")
+setwd("/Users/dennisperrett/Documents/Uni/Semester 5/Research Seminar/simulation_study_DSEM")
 
 library(mvtnorm)
 library(R2jags)
@@ -38,10 +39,10 @@ data <- list(
   observed_data = dat1
 )
 inits <- list(list(
-  ar = 0.5,  # Initial value for AR coefficient
-  ly = c(1,1,2)),list(
-    ar = 0.5,  # Initial value for AR coefficient
-    ly =c(1,1,2) ))
+  ar = 0.3,  # Initial value for AR coefficient
+  ly = c(0.4,0.8,2.2)),list(
+    ar = 0.7,  # Initial value for AR coefficient
+    ly =c(1.5,1.1,1.7) ))
 #################################
 # Test run
 #################################
@@ -54,6 +55,7 @@ fit.fa <- jags(data,  parameters.to.save=params, model.file="model1.txt", n.chai
 
 
 fit.fa
+traceplot(fit.fa)
 
 ########## Proper Stuff ##########
 
@@ -87,5 +89,3 @@ sim1 <- list.to.save.to[1]
 
 # Access rjags objects with double square brackets eg:
 sim1[[1]]$BUGSoutput$mean
-
-
