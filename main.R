@@ -82,7 +82,7 @@ T.List <- c(25, 50, 100)
 # Dennis starts at 10 and works up. When we have simmed enough, move on to the next N.
 # If we have 100 of each, do it again until we have 200 of each.
 # We may need a few more, if for some reason the N.Effs are low for some samples. In this case, we would just delete these.
-run.models(reps=10, model.file = "model1_unif.txt",N=50,NT=100)
+run.models(reps=10, model.file = "model1_unif.txt",N=10,NT=100)
 
 check.status("results_model1_diffuse")
 
