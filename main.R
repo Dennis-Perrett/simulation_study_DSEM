@@ -49,7 +49,7 @@ inits <- list(list(
 params <- c("ly","ar")
 
 #Note: Check working directory to find the model.file.
-fit.fa <- jags(data,  parameters.to.save=params, model.file="model1.txt", n.chains=2, n.iter=3000,
+fit.fa <- jags(data,  parameters.to.save=params, model.file="model1_diffuse.txt", n.chains=2, n.iter=3000,
                n.burnin = 500, n.thin=1,inits = inits)
 
 
@@ -71,9 +71,9 @@ T.List <- c(25, 50, 100)
 # Dennis starts at 10 and works up. When we have simmed enough, move on to the next N.
 # If we have 100 of each, do it again until we have 200 of each.
 # We may need a few more, if for some reason the N.Effs are low for some samples. In this case, we would just delete these.
-run.models(reps=100, model.file = "model1.txt",N=50,NT=100)
+run.models(reps=100, model.file = "model1_diffuse.txt",N=50,NT=100)
 
-check.status("results_model1")
+check.status("results_model1_diffuse")
 
 # Check the saved results
 #------ USE THIS TO CONVERT FROM RDA TO RDS ----- #
