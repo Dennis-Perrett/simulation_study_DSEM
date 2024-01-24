@@ -1,5 +1,5 @@
 rm(list=ls())
-#setwd("/Users/dennisperrett/Documents/Uni/Semester 5/Research Seminar/simulation_study_DSEM")
+setwd("/Users/dennisperrett/Documents/Uni/Semester 5/Research Seminar/simulation_study_DSEM")
 
 library(mvtnorm)
 library(R2jags)
@@ -8,7 +8,7 @@ Sys.setenv(LANG = "en")
 source("gen_data_version02.R")
 ##########################
 phi0 <- diag(1)*.7+.3 # cov(eta) # Per latent factor
-mu0  <- c(0)          # mean(eta). # Per Observed(?) factor
+mu0  <- c(0)          # mean(eta). # Mean of latent (deactivated)
 ar0  <- c(0.5)
 # ar(1) structure # Per Latent Factor
 
@@ -54,77 +54,80 @@ fit.fa
 N.List <- c(10,20,30,40,50)
 T.List <- c(25, 50, 100)
 
-# Create Storage Matrix
-results <- matrix(vector("list", length = 15),nrow=length(N.List),ncol=length(T.List))
-row.names(results) <- N.List
-colnames(results) <- T.List
-results
 
-# Run sim loop
-for (N.size in N.List){
-  for (T.size in T.List){
 
-    dat1 <- gendata02(N.size,T.size,phi0,mu0,ar0,ly0,td)
-
-    data <- list(
-      T = T.size,
-      N = N.size,
-      J = J,
-      observed_data = dat1
-    )
-
-    results[[as.character(N.size), as.character(T.size)]] <- jags(data, parameters.to.save=params, model.file="model1.txt", n.chains=2, n.iter=1000,
-                                                                            n.burnin = 800, n.thin=15)
+# Define a function for running JAGS models with repetitions
+run.models <- function(reps = 5, model.file, N, NT) {
+  
+  model_name <- sub("\\.txt$", "", model.file)
+  # Subfolder to save results to
+  dir <- file.path(paste0("results_",model_name)) 
+  if (!dir.exists(dir)) dir.create(dir)
+  
+  # Define cache file and result file names
+  CACHE.FILE <- "results_cache.rda"
+  SAVE.FILE.NAME <- paste0("results_", as.character(N), "_", as.character(NT), ".rda")
+  
+  # Load results from cache if available
+  if (file.exists(file.path(dir, SAVE.FILE.NAME))) {
+    load(file.path(dir, SAVE.FILE.NAME))
+  } else {
+    list.to.save.to = list()
   }
-}
-
-
-results[["50","50"]]
-results[["50","25"]]
-
-
-# Save and load the file
-save(results, file = "results.rda")
-load("results.rda")
-
-
-run.models <- function(reps=5,model.file, list.to.save.to = list(), N, NT ){
-
+  
+  # Record the starting length of the result list
   start.length <- length(list.to.save.to)
-
-  for (i in 1:reps){
-    print(paste0("Iteration: ", i,"/",reps,". Total: ", start.length + i,"/",start.length+reps))
-    dat1 <- gendata02(N.size,T.size,phi0,mu0,ar0,ly0,td)
-
+  
+  # Loop through the specified number of repetitions
+  for (i in 1:reps) {
+    print(paste0("Iteration: ", i, "/", reps, ". Total: ", start.length + i, "/", start.length + reps))
+    
+    # Generate data for the JAGS model
+    dat1 <- gendata02(N, NT, phi0, mu0, ar0, ly0, td)
+    
+    # Prepare data for JAGS
     data <- list(
-      T = T.size,
-      N = N.size,
+      T = NT,
+      N = N,
       J = J,
       observed_data = dat1
     )
-
-    res <- jags(data, parameters.to.save=params, model.file=model.file, n.chains=2, n.iter=3000,
-         n.burnin = 400, n.thin=1)
-
-
+    
+    # Run the JAGS model
+    res <- jags(data, parameters.to.save = params, model.file = model.file, n.chains = 2, n.iter = 5000,
+                n.burnin = 500, n.thin = 1)
+    
+    # Append the results to the list
     list.to.save.to <- c(list.to.save.to, list(res))
-
-    if ((res%%5)==0){
-      save(List.to.save.to, file="results_cache.rda",force = TRUE)
+    
+    # Save progress every 5 iterations
+    if ((i %% 5) == 0) {
+      save(list.to.save.to, file = CACHE.FILE)
     }
   }
-
-  #return(list.to.save.to)
+  
+  # Remove the cache file
+  if (file.exists(CACHE.FILE)) {
+    file.remove(CACHE.FILE)
+  }
+  
+  # Save the final result list
+  save(list.to.save.to, file = file.path(dir, SAVE.FILE.NAME))
+  
 }
 
-res_10_25 <- run.models(reps=50, model.file = "model1.txt",N=10,NT=25)
+# Ns to run: 10, 20, 30, 40, 50.
+# We need at least 100 iterations of each. Philipp starts at 50 and works down.
+# Dennis starts at 10 and works up. When we have simmed enough, move on to the next N.
+# If we have 100 of each, do it again until we have 200 of each.
+# We may need a few more, if for some reason the N.Effs are low for some samples. In this case, we would just delete these. 
+run.models(reps=5, model.file = "model1.txt",N=10,NT=100)
 
-#res_5_5 <- run.models(reps=15, list.to.save.to = res_5_5, model.file = "model1.txt",N=5,NT=5)
-save(res_10_25,file="res_10_25.rda")
+# Check the saved results
+load("./results/results_10_100.rda")
+sim1 <- list.to.save.to[1]
 
-res_10_25
-res_5_5[1]
+# Access rjags objects with double square brackets eg:
+sim1[[1]]$BUGSoutput$mean
 
-a <- list()
-a <- append(a,list(3))
-a[1]
+
