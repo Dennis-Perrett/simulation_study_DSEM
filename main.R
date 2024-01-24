@@ -4,25 +4,27 @@ setwd("/Users/dennisperrett/Documents/Uni/Semester 5/Research Seminar/simulation
 
 library(mvtnorm)
 library(R2jags)
+library(lattice)
 Sys.setenv(LANG = "en")
 
 source("gen_data_version02.R")
+source("genData.R")
 source("utils.R")
 ##########################
-phi0 <- diag(1)*1+0.0 # cov of latent variables # Per latent factor
+phi0 <- diag(1)*15+0.0 # cov of latent variables # Per latent factor
 mu0  <- c(4)          # mean of latent variables. # Mean of latent (deactivated)
 ar0  <- c(0.96)       # ar(1) structure # Per Latent Factor
 
 # Factor loadings must conform with means and td (the conditional variance of the items)
-ly0  <- matrix(c(1,1,2),3,1,byrow=F) # factor loadings
+ly0  <- matrix(c(1,.78,-2.23),3,1,byrow=F) # factor loadings
 td   <- diag(3)*.25 # cond. var(y) -> res var
 ##########################
 
 #set core specific seed
 set.seed(1234)
 
-N <- 20 # Number of people
-Nt <- 50 # Number of time points
+N <- 5 # Number of people
+Nt <- 100 # Number of time points
 J <- dim(ly0)[1]
 
 length(mu0)
@@ -42,20 +44,32 @@ inits <- list(list(
   ar = 0.3,  # Initial value for AR coefficient
   ly = c(0.4,0.8,2.2)),list(
     ar = 0.7,  # Initial value for AR coefficient
-    ly =c(1.5,1.1,1.7) ))
+    ly =c(1.5,1.1,-1.7) ))
 #################################
 # Test run
 #################################
 params <- c("ly","ar")
 
 #Note: Check working directory to find the model.file.
-fit.fa <- jags(data,  parameters.to.save=params, model.file="model1_diffuse.txt", n.chains=2, n.iter=3000,
-               n.burnin = 500, n.thin=1,inits = inits)
+fit.fa <- jags(data,  parameters.to.save=params, model.file="model1_step.txt", n.chains=2, n.iter=4000,
+               n.burnin = 500)
 
 
 
 fit.fa
 
+ar0
+ly0
+
+# Here we can see the relation between the loadings
+person <- 5
+{
+  plot(dat1[person,,1],type="l", col="red", ylim=c(-20,20))
+  lines(dat1[person,,2], col="blue")
+  lines(dat1[person,,3], col="purple")
+}
+
+# From here we can create some semi-informative priors
 
 ########## Proper Stuff ##########
 
@@ -63,15 +77,12 @@ N.List <- c(50,40,30,20,10)
 T.List <- c(25, 50, 100)
 
 
-
-
-
 # Ns to run: 10, 20, 30, 40, 50.
 # We need at least 100 iterations of each. Philipp starts at 50 and works down.
 # Dennis starts at 10 and works up. When we have simmed enough, move on to the next N.
 # If we have 100 of each, do it again until we have 200 of each.
 # We may need a few more, if for some reason the N.Effs are low for some samples. In this case, we would just delete these.
-run.models(reps=100, model.file = "model1_diffuse.txt",N=50,NT=100)
+run.models(reps=10, model.file = "model1_unif.txt",N=50,NT=100)
 
 check.status("results_model1_diffuse")
 
