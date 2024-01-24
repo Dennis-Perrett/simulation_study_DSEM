@@ -9,10 +9,9 @@ Sys.setenv(LANG = "en")
 source("gen_data_version02.R")
 source("utils.R")
 ##########################
-phi0 <- diag(1)*.7+.3# cov(eta) # Per latent factor
-mu0  <- c(0)          # mean(eta). # Mean of latent (deactivated)
-ar0  <- c(0.5)
-# ar(1) structure # Per Latent Factor
+phi0 <- diag(1)*1+0.0 # cov of latent variables # Per latent factor
+mu0  <- c(4)          # mean of latent variables. # Mean of latent (deactivated)
+ar0  <- c(0.96)       # ar(1) structure # Per Latent Factor
 
 # Factor loadings must conform with means and td (the conditional variance of the items)
 ly0  <- matrix(c(1,1,2),3,1,byrow=F) # factor loadings
@@ -29,6 +28,7 @@ J <- dim(ly0)[1]
 length(mu0)
 
 dat1 <- gendata02(N,Nt,phi0,mu0,ar0,ly0,td)
+
 head(dat1)
 
 dim(dat1)

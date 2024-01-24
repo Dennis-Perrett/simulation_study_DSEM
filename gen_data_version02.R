@@ -32,9 +32,10 @@ gendata02 <- function(N,Nt,phi0,mu0,ar0,ly0,td){
     zeta.var <- phi0*(1-ar0%*%t(ar0))
     mean <- integer(N.lf)
     zeta <- rmvnorm(N,mean,zeta.var) # this is a residual with var (1-phi^2) sp tjat var(eta)==1
+
     for (e in 1:N.lf){
-      #eta[,j,e] <- eta0[,e] + ar0[e]*eta[,j-1,e] + zeta[,e]
-      eta[,j,e] <-  ar0*eta[,j-1,e] + zeta[,e]
+      eta[,j,e] <- ar0*eta[,j-1,e] + zeta[,e]
+      #eta[,j,e] <-  ar0*eta[,j-1,e] + zeta[e]
     }
     y[,j,] <- eta[,j,]%*%t(ly0)+rmvnorm(N,sigma = td)
   }
