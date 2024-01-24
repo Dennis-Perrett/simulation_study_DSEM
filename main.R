@@ -51,7 +51,7 @@ inits <- list(list(
 params <- c("ly","ar")
 
 #Note: Check working directory to find the model.file.
-fit.fa <- jags(data,  parameters.to.save=params, model.file="model1_step.txt", n.chains=2, n.iter=4000,
+fit.fa <- jags(data,  parameters.to.save=params, model.file="model1_unif.txt", n.chains=2, n.iter=4000,
                n.burnin = 500)
 
 
