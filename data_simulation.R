@@ -95,6 +95,7 @@ saveRDS(means_30_100,"means_30_100.rds")
 
 
 
+
 # Check the saved results
 #------ USE THIS TO CONVERT FROM RDA TO RDS ----- #
 load("./results_model1/results_10_100.rda")
@@ -109,3 +110,5 @@ sim1 <- list.to.save.to[1]
 
 # Access rjags objects with double square brackets eg:
 sim1[[1]]$BUGSoutput$mean
+
+
