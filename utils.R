@@ -91,3 +91,20 @@ check.status <- function(directory_path) {
     cat(sprintf("%s: %s repetitions\n", name, value))
   }
 }
+
+
+extract.parameters <- function(sims.list){
+  iters <- length(sims.list)
+  ar <- vector(length=iters)
+  ly <- matrix(nrow=3, ncol=iters)
+  
+  for (i in 1:iters){
+
+    means <- sims.list[[i]]$BUGSoutput$mean
+    ar[i] <- means$ar
+    ly[,i] <- means$ly
+    
+  }
+  
+  return(list(ar = ar, ly = ly))
+}

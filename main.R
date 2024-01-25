@@ -82,9 +82,18 @@ T.List <- c(25, 50, 100)
 # Dennis starts at 10 and works up. When we have simmed enough, move on to the next N.
 # If we have 100 of each, do it again until we have 200 of each.
 # We may need a few more, if for some reason the N.Effs are low for some samples. In this case, we would just delete these.
-run.models(reps=10, model.file = "model1_unif.txt",N=10,NT=100)
 
-check.status("results_model1_diffuse")
+#run.models(reps=100, model.file = "model1_unif.txt",N=20,NT=100)
+run.models(reps=100, model.file = "model1_unif.txt",N=40,NT=100)
+
+check.status("results_model1_unif")
+
+# Extract means and save as rds
+res <- readRDS("./results_model1_unif/results_30_100.rds")
+means_30_100 <- extract.parameters(res)
+saveRDS(means_30_100,"means_30_100.rds")
+
+
 
 # Check the saved results
 #------ USE THIS TO CONVERT FROM RDA TO RDS ----- #
