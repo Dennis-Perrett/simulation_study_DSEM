@@ -82,13 +82,16 @@ T.List <- c(25, 50, 100)
 # If we have 100 of each, do it again until we have 200 of each.
 # We may need a few more, if for some reason the N.Effs are low for some samples. In this case, we would just delete these.
 
+
+# True "AR" mean = 0.2
+# True "AR" var = 0.5
 #run.models(reps=100, model.file = "model1_unif.txt",N=20,NT=100)
-run.models(reps=1, model.file = "models/model1_unif.txt",N=10,NT=100)
-sub("\\.txt$", "", basename("/models/model1_RE.txt"))
+run.models(reps=100, model.file = "models/model1_unif.txt",N=10,NT=100)
+
 check.status("results_model1_unif")
 
 # Extract means and save as rds
-res <- readRDS("./results_model1_unif/results_30_100.rds")
+res <- readRDS("results/model1_RE/results_10_100.rds")
 means_30_100 <- extract.parameters(res)
 saveRDS(means_30_100,"means_30_100.rds")
 

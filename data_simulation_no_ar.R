@@ -88,14 +88,22 @@ T.List <- c(25, 50, 100)
 # If we have 100 of each, do it again until we have 200 of each.
 # We may need a few more, if for some reason the N.Effs are low for some samples. In this case, we would just delete these.
 
-#run.models(reps=100, model.file = "model1_unif.txt",N=20,NT=100)
-run.models(reps=5, model.file = "models/model1_RE.txt",N=10,NT=10)
+#run.models(reps=100, model.file = "models/model1_RE.txt",N=20,NT=100)
+#run.models(reps=100, model.file = "models/model1_RE.txt",N=30,NT=100)
+#run.models(reps=100, model.file = "models/model1_RE.txt",N=40,NT=100)
+#run.models(reps=100, model.file = "models/model1_RE.txt",N=50,NT=100)
+
+run.models(reps=200, model.file = "models/model1_RE.txt",N=10,NT=50)
+run.models(reps=200, model.file = "models/model1_RE.txt",N=20,NT=50)
+run.models(reps=200, model.file = "models/model1_RE.txt",N=30,NT=50)
+run.models(reps=200, model.file = "models/model1_RE.txt",N=40,NT=50)
+run.models(reps=200, model.file = "models/model1_RE.txt",N=50,NT=50)
 
 check.status("results/model1_RE")
 
 
 # Extract means and save as rds
-res <- readRDS("./results_model1_RE/results_10_100.rds")
+res <- readRDS("results/model1_RE/results_10_100.rds")
 res
 means_30_100 <- extract.parameters(res)
 saveRDS(means_30_100,"means_30_100.rds")

@@ -109,3 +109,26 @@ extract.parameters <- function(sims.list){
   
   return(list(ar = ar, ly = ly))
 }
+
+extract.params2 <- function(sims.list.rds){
+  
+  sims.list <- readRDS(sims.list.rds)
+  
+  iters <- length(sims.list)
+  mu <- vector(length=iters)
+  sigma <- vector(length=iters)
+  ly <- matrix(nrow=3, ncol=iters)
+  
+  
+  
+  for (i in 1:iters){
+    
+    means <- sims.list[[i]]$BUGSoutput$mean
+    mu[i] <- means$ar.mean
+    sigma[i] <- means$ar.var
+    ly[,i] <- means$ly
+    
+  }
+  
+  return(list(mu=mu, sigma = sigma, ly= ly))
+}
