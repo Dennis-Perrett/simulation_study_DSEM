@@ -1,11 +1,12 @@
 # Define a function for running JAGS models with repetitions
 run.models <- function(reps = 5, model.file, N, NT) {
+  params <- c("ly","ar.var","ar.mean")
+  model_name <- sub("\\.txt$", "", basename(model.file))
   
-  model_name <- sub("\\.txt$", "", model.file)
   # Subfolder to save results to
-  dir <- file.path(paste0("results_",model_name)) 
+  dir <- file.path(paste0("results/",model_name)) 
+  if (!dir.exists("results")) dir.create("results")
   if (!dir.exists(dir)) dir.create(dir)
-  
   # Define cache file and result file names
   CACHE.FILE <- "results_cache.rda"
   SAVE.FILE.NAME <- paste0("results_", as.character(N), "_", as.character(NT), ".rds")
@@ -25,7 +26,7 @@ run.models <- function(reps = 5, model.file, N, NT) {
     print(paste0("Iteration: ", i, "/", reps, ". Total: ", start.length + i, "/", start.length + reps))
     
     # Generate data for the JAGS model
-    dat1 <- gendata02(N, NT, phi0, mu0, ar0, ly0, td)
+    dat1 <- genData(N,NT,latent.ar.mean = c(0.2), latent.ar.var = diag(1)*0.5) # Example usage:
     
     # Prepare data for JAGS
     data <- list(
