@@ -1,5 +1,6 @@
 # Ignore files in directories starting with "results"
 results*/
 
+*.rda
 # Optionally, you can also ignore all files within such directories
 results/*/*

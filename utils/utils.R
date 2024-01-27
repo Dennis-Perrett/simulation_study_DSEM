@@ -1,6 +1,18 @@
 # Define a function for running JAGS models with repetitions
 run.models <- function(reps = 5, model.file, N, NT) {
-  params <- c("ly","ar.var","ar.mean")
+  #params <- c("ly","ar.var","ar.mean")
+  params <- c('alpha_var',
+              'beta_var',
+              'phi_var',
+              'ln_var_var',
+              'alpha_on_W1',
+              'alpha_on_W2',
+              'beta_on_W1',
+              'beta_on_W2',
+              'phi_on_W1',
+              'phi_on_W2',
+              'lnV_on_W1',
+              'lnV_on_W2')
   model_name <- sub("\\.txt$", "", basename(model.file))
   
   # Subfolder to save results to
@@ -26,15 +38,15 @@ run.models <- function(reps = 5, model.file, N, NT) {
     print(paste0("Iteration: ", i, "/", reps, ". Total: ", start.length + i, "/", start.length + reps))
     
     # Generate data for the JAGS model
-    dat1 <- genData(N,NT,latent.ar.mean = c(0.2), latent.ar.var = diag(1)*0.5) # Example usage:
+    #dat1 <- genData(N,NT,latent.ar.mean = c(0.2), latent.ar.var = diag(1)*0.5) # Example usage:
+    dat1 <- genDataMcNeish(N,NT)
     
     # Prepare data for JAGS
-    data <- list(
-      T = NT,
-      N = N,
-      J = J,
-      observed_data = dat1
-    )
+    data <- list(N = dim(dat1$Y)[1],
+                 NT = dim(dat1$Y)[2],
+                 X = dat1$X,
+                 Y = dat1$Y,
+                 W = dat1$W)
     
     # Run the JAGS model
     res <- jags(data, parameters.to.save = params, model.file = model.file, n.chains = 2, n.iter = 5000,
@@ -44,7 +56,7 @@ run.models <- function(reps = 5, model.file, N, NT) {
     list.to.save.to <- c(list.to.save.to, list(res))
     
     # Save progress every 5 iterations
-    if ((i %% 5) == 0) {
+    if ((i %% 50) == 0) {
       saveRDS(list.to.save.to, file = CACHE.FILE)
     }
   }
@@ -120,7 +132,6 @@ extract.params2 <- function(sims.list.rds){
   ly <- matrix(nrow=3, ncol=iters)
   
   
-  
   for (i in 1:iters){
     
     means <- sims.list[[i]]$BUGSoutput$mean
@@ -131,4 +142,28 @@ extract.params2 <- function(sims.list.rds){
   }
   
   return(list(mu=mu, sigma = sigma, ly= ly))
+}
+
+extract.params3 <- function(sims.list, metric='mean'){
+  sims.list <- readRDS(sims.list)
+  params <- sims.list[[1]]$BUGSoutput[[metric]]
+  for (i in 2:length(sims.list)){
+    
+    params <- Map(c,params,sims.list[[i]]$BUGSoutput[[metric]])
+  }
+  return(params)
+}
+
+
+
+
+check.fit <- function(model, pop.vals){
+  
+  for (est_name in names(model$BUGSoutput$mean)){
+    if (est_name != "deviance"){
+      print(paste0(est_name,": ", model$BUGSoutput$mean[[est_name]] / pop.vals[[est_name]]))
+    }
+  }
+  
+  
 }

@@ -127,3 +127,69 @@ sim1 <- list.to.save.to[1]
 sim1[[1]]$BUGSoutput$mean
 
 
+
+source("utils/genDataMcNeish.R")
+
+datmn <- genDataMcNeish(10,50)
+data <- list(N = dim(datmn$Y)[1],
+             NT = dim(datmn$Y)[2],
+             X = datmn$X,
+             Y = datmn$Y,
+             W = datmn$W)
+
+pop.vals <- list(
+  phi_on_W1 = 0.10,
+  phi_on_W2 = 0.05,
+  beta_on_W1 = 0.30,
+  beta_on_W2 = 0.40,
+  lnV_on_W1 = 0.30,
+  lnV_on_W2 = 0.10,
+  alpha_on_W1 = 0.50,
+  alpha_on_W2 = 0.30,
+  int_beta = 0.7,
+  int_phi= 0.2,
+  alpha_var = 0.3,
+  beta_var = 0.5,
+  phi_var = 0.01,
+  ln_var_var = 0.1
+)
+
+inits <- list(
+  pop.vals,
+  pop.vals
+)
+params <- c('alpha_var',
+            'beta_var',
+            'phi_var',
+            'ln_var_var',
+            'alpha_on_W1',
+            'alpha_on_W2',
+            'beta_on_W1',
+            'beta_on_W2',
+            'phi_on_W1',
+            'phi_on_W2',
+            'lnV_on_W1',
+            'lnV_on_W2')
+
+fit.mn <- jags(data,  parameters.to.save=params, model.file="models/model_MN.txt", n.chains=2, n.iter=8000,
+               n.burnin = 500, n.thin=1, inits=inits)
+
+fit.mn
+source("utils/utils.R")
+
+# Run McNeish Model # Uniform
+#run.models(reps=150, model.file = "models/model_MN.txt",N=10,NT=50)
+#run.models(reps=200, model.file = "models/model_MN.txt",N=20,NT=50)
+#run.models(reps=200, model.file = "models/model_MN.txt",N=30,NT=50)
+#run.models(reps=200, model.file = "models/model_MN.txt",N=40,NT=50)
+#run.models(reps=200, model.file = "models/model_MN.txt",N=50,NT=50)
+
+check.status("results/model_MN")
+res <- readRDS("results/model_MN/results_10_50.rds")
+res
+
+res[,]$BUGSoutput$median
+
+Map(c, res[[1]]$BUGSoutput$median,res[[2]]$BUGSoutput$median)
+
+

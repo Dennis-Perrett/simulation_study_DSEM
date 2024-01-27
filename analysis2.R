@@ -1,68 +1,84 @@
 #setwd("/Users/philippholscher/Downloads/simulation_study_DSEM-main")
 setwd("/Users/dennisperrett/Documents/Uni/Semester 5/Research Seminar/simulation_study_DSEM")
-
+rm(list=ls())
 source("utils/utils.R")
 library(ggplot2)
 library(tidyverse)
-install.packages('latex2exp')
+#install.packages('latex2exp')
 library(latex2exp)
 
-# Official factor loadings
-ly0  <- matrix(c(1,-1,-2),3,1,byrow=F) # factor loadings
-# Official AR Coefficient
-mu  <- c(0.2)       # ar(1) structure # Per Latent Factor
-sigma <- c(0.5)
-
+pop.vals <- list(
+  phi_on_W1 = 0.10,
+  phi_on_W2 = 0.05,
+  beta_on_W1 = 0.30,
+  beta_on_W2 = 0.40,
+  lvar_on_W1 = 0.30,
+  lvar_on_W2 = 0.10,
+  alpha_on_W1 = 0.50,
+  alpha_on_W2 = 0.30,
+  int_beta = 0.7,
+  int_phi= 0.2,
+  var_alpha = 0.3,
+  var_beta = 0.5,
+  var_phi = 0.01,
+  var_lvar = 0.1
+  
+)
 
 
 
 # Extract the means
-means_10_100 <- extract.params2("results/model1_RE/results_10_100.rds")
-means_20_100 <- extract.params2("results/model1_RE/results_20_100.rds")
-means_30_100 <- extract.params2("results/model1_RE/results_30_100.rds")
-means_40_100 <- extract.params2("results/model1_RE/results_40_100.rds")
-#means_50_100 <- extract.params2("results/model1_RE/results_50_100.rds")
+med_10_50 <- extract.params3("results/model_MN/results_10_50.rds","mean")
+med_20_50 <- extract.params3("results/model_MN/results_20_50.rds","mean")
+med_30_50 <- extract.params3("results/model_MN/results_30_50.rds","mean")
+med_40_50 <- extract.params3("results/model_MN/results_40_50.rds","mean")
+med_50_50 <- extract.params3("results/model_MN/results_50_50.rds","mean")
 
 
-saveRDS(means_10_100, "simulation_means/means_10_100_RE_uninf.rds")
-saveRDS(means_20_100, "simulation_means/means_20_100_RE_uninf.rds")
-saveRDS(means_30_100, "simulation_means/means_30_100_RE_uninf.rds")
-saveRDS(means_40_100, "simulation_means/means_40_100_RE_uninf.rds")
-#saveRDS(means_10_100, "simulation_means/means_10_100_RE_uninf.rds")
+saveRDS(med_10_50, "simulation_means/med_10_50_MN_uninf.rds")
+saveRDS(med_20_50, "simulation_means/med_20_50_MN_uninf.rds")
+saveRDS(med_30_50, "simulation_means/med_30_50_MN_uninf.rds")
+saveRDS(med_40_50, "simulation_means/med_40_50_MN_uninf.rds")
+saveRDS(med_50_50, "simulation_means/med_50_50_MN_uninf.rds")
 
 # Read in the means
-means_10_100 <- readRDS("simulation_means/means_10_100_RE_uninf.rds")
-means_20_100 <- readRDS("simulation_means/means_20_100_RE_uninf.rds")
-means_30_100 <- readRDS("simulation_means/means_30_100_RE_uninf.rds")
-means_40_100 <- readRDS("simulation_means/means_40_100_RE_uninf.rds")
+med_10_50 <- readRDS("simulation_means/med_10_50_MN_uninf.rds")
+med_20_50 <- readRDS("simulation_means/med_20_50_MN_uninf.rds")
+med_30_50 <- readRDS("simulation_means/med_30_50_MN_uninf.rds")
+med_40_50 <- readRDS("simulation_means/med_40_50_MN_uninf.rds")
+med_50_50 <- readRDS("simulation_means/med_50_50_MN_uninf.rds")
 
-mean(means_40_100$sigma)
-plot(means_40_100$sigma)
+
 # Remove non-converged samples / outliers
 
-
+res <- readRDS("results/model_MN/results_50_50.rds")
+res[[1]]
 # Calculate relative bias
-(rel.bias_mu_10 <- mean(means_10_100$mu / mu))
-(rel.bias_mu_20 <- mean(means_20_100$mu / mu))
-(rel.bias_mu_30 <- mean(means_30_100$mu / mu))
-(rel.bias_mu_40 <- mean(means_40_100$mu / mu))
+(rel.bias_mu_10 <- mean(med_10_50$beta_var / pop.vals$var_beta))
+(rel.bias_mu_20 <- mean(med_20_50$beta_var / pop.vals$var_beta))
+(rel.bias_mu_30 <- mean(med_30_50$beta_var / pop.vals$var_beta))
+(rel.bias_mu_40 <- mean(med_40_50$beta_var / pop.vals$var_beta))
+(rel.bias_mu_50 <- mean(med_50_50$beta_var / pop.vals$var_beta))
 
-(rel.bias_sig_10 <- mean(means_10_100$sigma / sigma))
-(rel.bias_sig_20 <- mean(means_20_100$sigma / sigma))
-(rel.bias_sig_30 <- mean(means_30_100$sigma / sigma))
-(rel.bias_sig_40 <- mean(means_40_100$sigma / sigma))
+(rel.bias_sig_10 <- mean(means_10_50$sigma / sigma))
+(rel.bias_sig_20 <- mean(means_20_50$sigma / sigma))
+(rel.bias_sig_30 <- mean(means_30_50$sigma / sigma))
+(rel.bias_sig_40 <- mean(means_40_50$sigma / sigma))
+(rel.bias_sig_50 <- mean(means_50_50$sigma / sigma))
 
 
 df <- data.frame(N10 = means_10_100$sigma / sigma,
-           N20 = means_20_100$sigma / sigma,
-           N30 = means_30_100$sigma / sigma,
-           N40 = means_40_100$sigma / sigma
+           N20 = means_20_50$sigma / sigma,
+           N30 = means_30_50$sigma / sigma,
+           N40 = means_40_50$sigma / sigma,
+           N50 = means_50_50$sigma / sigma
            )
 
 df.mu <- data.frame(N10 = means_10_100$mu / mu,
-                 N20 = means_20_100$mu / mu,
-                 N30 = means_30_100$mu / mu,
-                 N40 = means_40_100$mu / mu
+                 N20 = means_20_50$mu / mu,
+                 N30 = means_30_50$mu / mu,
+                 N40 = means_40_50$mu / mu,
+                 N50 = means_50_50$mu / mu
 )
 
 
@@ -131,5 +147,25 @@ averages
 # Plot Relative Bias Paths
 
 
+plot(averages$ARBSigma,type="l")
 
 
+# Assuming long_data is your tibble with columns 'X' and 'Y'
+p <- ggplot(averages) +
+  geom_line(aes(x = 1:5 * 10, y = ARBSigma), color=alpha("black", 0.4)) + 
+  stat_smooth(aes(x = 1:5 * 10, y=ARBSigma), method = "loess", formula = y ~ x, span=1, se=F, color=alpha('lightblue',1)) +
+  theme_linedraw() +
+  labs(title = "Average Relative Bias Trajectory (Sigma)", x = "Level 2 Sample Size", y = "Relative Bias") + 
+  geom_hline(yintercept = c(1.1,.9), linetype = "dashed", color = "black", size=0.4)
+
+# Print the plot
+p
+
+p.mu <- ggplot(averages) +
+  geom_line(aes(x = 1:5 * 10, y = ARBMu), color=alpha("black", 0.4)) + 
+  stat_smooth(aes(x = 1:5 * 10, y=ARBMu), method = "loess", formula = y ~ x, span=1, se=F, color=alpha('lightblue',1)) +
+  theme_linedraw() +
+  labs(title = "Average Relative Bias Trajectory (Mu)", x = "Level 2 Sample Size", y = "Relative Bias") + 
+  geom_hline(yintercept = c(1.1,.9), linetype = "dashed", color = "black", size=0.4)
+
+p.mu
