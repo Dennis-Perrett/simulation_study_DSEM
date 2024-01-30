@@ -130,7 +130,7 @@ sim1[[1]]$BUGSoutput$mean
 
 source("utils/genDataMcNeish.R")
 
-datmn <- genDataMcNeish(10,50)
+datmn <- genDataMcNeish(25,100)
 data <- list(N = dim(datmn$Y)[1],
              NT = dim(datmn$Y)[2],
              X = datmn$X,
@@ -169,12 +169,18 @@ params <- c('alpha_var',
             'phi_on_W1',
             'phi_on_W2',
             'lnV_on_W1',
-            'lnV_on_W2')
+            'lnV_on_W2',
+            'int_beta',
+            'int_phi')
 
-fit.mn <- jags(data,  parameters.to.save=params, model.file="models/model_MN.txt", n.chains=2, n.iter=8000,
-               n.burnin = 500, n.thin=1, inits=inits)
+fit.mn <- jags(data,  parameters.to.save=params, model.file="models/model_MN_IG.txt", n.chains=2, n.iter=5800,
+               n.burnin = 500, n.thin=1)
 
 fit.mn
+
+# Average variance of Y
+mean(apply(datmn$Y, MARGIN = 1, var))
+check.fit(fit.mn, pop.vals)
 source("utils/utils.R")
 
 # Run McNeish Model # Uniform
@@ -191,5 +197,4 @@ res
 res[,]$BUGSoutput$median
 
 Map(c, res[[1]]$BUGSoutput$median,res[[2]]$BUGSoutput$median)
-
 

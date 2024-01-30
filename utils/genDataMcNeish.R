@@ -11,8 +11,8 @@ genDataMcNeish <- function(N, Nt){
   #          W (N x 2)
   # 
   
-  W1 <- rnorm(N, 10, 1) # this is correct for the output
-  W2 <- rnorm(N, 5, 1)
+  W1 <- rnorm(N, 0, 1) # this is correct for the output
+  W2 <- rnorm(N, 0, 1)
   
   Y <- matrix(NA, nrow=N, ncol=Nt)
   X <- matrix(NA, nrow=N, ncol=Nt)
@@ -23,14 +23,17 @@ genDataMcNeish <- function(N, Nt){
     beta   <- 0.7 + (0.3 * W1[i]) + (.2 * W2[i]) + rnorm(1,0, sd = sqrt(.3))
     ln_var <-       (0.3 * W1[i]) + (.1 * W2[i]) + rnorm(1,0,sd = sqrt(.1))
     
-    Yi <- rnorm(Nt, 0 , sd = sqrt(exp(ln_var)))
-    Xi <- rnorm(Nt, 0 , sd = 1)
-    for (t in 2:Nt){
-      Yi[t] <- alpha + phi * Yi[t - 1] + beta * Xi[t] + Yi[t]
+    
+    Yi <- rnorm(Nt+1,0,0)
+    Yi[1] <- alpha + rnorm(1,0,sd=sqrt(exp(ln_var)))
+    Xi <- rnorm(Nt+1, 5 , sd = 1) # Variance = 1 as per paper
+    for (t in 2:(Nt+1)){
+      Yi[t] <- alpha + phi * (Yi[t - 1]-alpha) + beta * Xi[t] + rnorm(1,0,sd=sqrt(exp(ln_var)))
       
     }
-    Y[i,] <- Yi
-    X[i,] <- Xi
+    
+    Y[i,] <- Yi[2:(Nt+1)]
+    X[i,] <- Xi[2:(Nt+1)]
     
     
   }
@@ -41,10 +44,7 @@ genDataMcNeish <- function(N, Nt){
   
 }
 
-
-
-ge <- genDataMcNeish(5,10)
-plot(ge$Y[2,], type="l")
-lines(ge$Y[5,], col="blue")
-lines(ge$Y[3,], col="red")
+dattest <- genDataMcNeish(1,100)
+plot(dattest$Y[,],type="l",main="Example of simulated data",xlab = "Y")
+dattest$Y
 
