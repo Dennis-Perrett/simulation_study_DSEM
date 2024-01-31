@@ -1,4 +1,3 @@
-# Define a function for running JAGS models with repetitions
 run.models <- function(reps = 5, model.file, N, NT) {
   #params <- c("ly","ar.var","ar.mean")
   params <- c('alpha_var',
@@ -12,7 +11,9 @@ run.models <- function(reps = 5, model.file, N, NT) {
               'phi_on_W1',
               'phi_on_W2',
               'lnV_on_W1',
-              'lnV_on_W2')
+              'lnV_on_W2',
+              'int_beta',
+              'int_phi')
   model_name <- sub("\\.txt$", "", basename(model.file))
   
   # Subfolder to save results to
@@ -35,6 +36,7 @@ run.models <- function(reps = 5, model.file, N, NT) {
   
   # Loop through the specified number of repetitions
   for (i in 1:reps) {
+    print(paste0("Model: ", model.file, ". N: ",N,", NT: ",NT))
     print(paste0("Iteration: ", i, "/", reps, ". Total: ", start.length + i, "/", start.length + reps))
     
     # Generate data for the JAGS model
@@ -49,7 +51,7 @@ run.models <- function(reps = 5, model.file, N, NT) {
                  W = dat1$W)
     
     # Run the JAGS model
-    res <- jags(data, parameters.to.save = params, model.file = model.file, n.chains = 2, n.iter = 5000,
+    res <- jags(data, parameters.to.save = params, model.file = model.file, n.chains = 2, n.iter = 2000,
                 n.burnin = 500, n.thin = 1)
     
     # Append the results to the list
@@ -166,4 +168,114 @@ check.fit <- function(model, pop.vals){
   }
   
   
+}
+
+
+extract.rel.bias.from.list.of.means <- function(means, param){
+  # takes in a list of results, and a parameter as a string
+  # Returns an array of relative biases in the order of input list
+  RLDD <- c()
+  for (r in means){
+    RLDD <- c(RLDD,(relative.bias(r, param)))
+  }
+  return (RLDD)
+}
+
+
+relative.bias <- function(results, param){
+  # Calculates relative bias
+  return ( mean(results[[param]] / pop.vals[[param]]))
+  
+}
+
+
+plot.RB.path <- function(df, title="Average Relative Bias Trajectories"){
+  # Input: Df of [ X , IG, DD]  
+  # Assuming long_data is your tibble with columns 'X' and 'Y'
+  p <- ggplot(df) +
+    geom_line(aes(x = X, y = Y, group=Prior), color=alpha("black",0.4)) + 
+    stat_smooth(aes(x = X, y=Y, colour=Prior), method = "loess", formula = y ~ x, span=1, se=F) +
+    theme_linedraw() +
+    labs(title = bquote(underline(.(title))), x = "Level 2 Sample Size", y = "Relative Bias",color="Lines") + 
+    geom_hline(yintercept = c(1.1,.9), linetype = "dashed", color = "darkgrey", size=.6)+
+    scale_color_manual(
+      name=NULL,
+      labels = c("Admissible-Range-Restricted", "Default Diffuse"),
+      values = c('#34d5eb','#218491')
+    ) +
+    theme(axis.line = element_line(colour = "#9e9e9e"),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          panel.border = element_blank(),
+          panel.background = element_blank(),
+          legend.position = c(0.784,.907),
+          axis.ticks.length.y=unit(c(-2.5,2.5), "pt"),
+          axis.ticks.length.x=unit(c(-2.5,2.5), "pt"),
+          axis.ticks.x = element_line(color = "#9e9e9e", size=.5),
+          axis.ticks.y = element_line(color = "#9e9e9e", size=.5),
+          plot.title = element_text(hjust = 0.5),
+          text=element_text(family="Times New Roman", color="#4d4d4d")) +
+    scale_y_continuous(breaks = seq(0.6, 3, by=0.2), limits = c(0.6, NA))
+  
+  return(p)}
+
+
+
+
+
+rand.fun <- function(){
+  # Plot distributions of relative biases
+  p.sigma <- ggplot(d, aes(x=x, y=y)) + 
+    geom_violin(
+      fill = alpha("lightblue",.5),
+      size=0.3
+    ) + 
+    geom_boxplot(
+      width = 0.1,  # Adjust the width of the boxplot
+      fill = alpha("white",.8),  # Adjust the fill color of the boxplot
+      size=0.3
+    ) +
+    geom_hline(yintercept = 1, linetype = "dashed", color = "black", size=0.4) +
+    theme_linedraw() +
+    ggtitle(
+      label="Relative Bias of Sigma per Sample Size (N)",
+      subtitle=TeX('Relative Bias $=\\left(\\hat{\\theta}/\\theta\\right)$, where 1 is optimal (indicated below with dashed black line).')
+    ) +
+    ylab("Relative Bias") +
+    theme(
+      plot.title = element_text(size = 10),
+      plot.subtitle = element_text(size=8)
+    )
+  p.sigma
+  p.mu <- ggplot(long_data, aes(x=`N Size`, y=`Mu`)) + 
+    geom_violin(
+      fill = alpha("lightblue",.5),
+      size=0.3
+    ) + 
+    geom_boxplot(
+      width = 0.1,  # Adjust the width of the boxplot
+      fill = alpha("white",.8),  # Adjust the fill color of the boxplot
+      size=0.3
+    ) +
+    geom_hline(yintercept = 1, linetype = "dashed", color = "black", size=0.4) +
+    theme_linedraw() +
+    ggtitle(
+      label="Relative Bias of Mu per Sample Size (N)",
+      subtitle=TeX('Relative Bias $=\\left(\\hat{\\theta}/\\theta\\right)$, where 1 is optimal (indicated below with dashed black line).')
+    ) +
+    ylab("Relative Bias") +
+    theme(
+      plot.title = element_text(size = 10),
+      plot.subtitle = element_text(size=8)
+    )
+  
+
+}
+
+create.data.frame.from.results <- function(IG.data,DD.data){
+  d1 <- data.frame(x=(1:5)*10, y = IG.data, prior = "Admissible-Range-Restricted")
+  d2 <- data.frame(x=(1:5)*10, y = DD.data, prior = "Default Diffuse")  
+  df <- rbind(d1,d2)
+  names(df) <- c("X","Y","Prior")
+  return(df)
 }

@@ -173,7 +173,7 @@ params <- c('alpha_var',
             'int_beta',
             'int_phi')
 
-fit.mn <- jags(data,  parameters.to.save=params, model.file="models/model_MN_IG.txt", n.chains=2, n.iter=5800,
+fit.mn <- jags(data,  parameters.to.save=params, model.file="models/model_MN_IG.txt", n.chains=2, n.iter=2000,
                n.burnin = 500, n.thin=1)
 
 fit.mn
@@ -184,11 +184,17 @@ check.fit(fit.mn, pop.vals)
 source("utils/utils.R")
 
 # Run McNeish Model # Uniform
-#run.models(reps=150, model.file = "models/model_MN.txt",N=10,NT=50)
-#run.models(reps=200, model.file = "models/model_MN.txt",N=20,NT=50)
-#run.models(reps=200, model.file = "models/model_MN.txt",N=30,NT=50)
-#run.models(reps=200, model.file = "models/model_MN.txt",N=40,NT=50)
-#run.models(reps=200, model.file = "models/model_MN.txt",N=50,NT=50)
+run.models(reps=200, model.file = "models/model_MN.txt",N=10,NT=100)
+run.models(reps=200, model.file = "models/model_MN.txt",N=20,NT=100)
+run.models(reps=200, model.file = "models/model_MN.txt",N=30,NT=100)
+run.models(reps=200, model.file = "models/model_MN.txt",N=40,NT=100)
+run.models(reps=200, model.file = "models/model_MN.txt",N=50,NT=100)
+
+run.models(reps=200, model.file = "models/model_MN_IG.txt",N=10,NT=100)
+run.models(reps=200, model.file = "models/model_MN_IG.txt",N=20,NT=100)
+run.models(reps=200, model.file = "models/model_MN_IG.txt",N=30,NT=100)
+run.models(reps=200, model.file = "models/model_MN_IG.txt",N=40,NT=100)
+run.models(reps=200, model.file = "models/model_MN_IG.txt",N=50,NT=100)
 
 check.status("results/model_MN")
 res <- readRDS("results/model_MN/results_10_50.rds")
