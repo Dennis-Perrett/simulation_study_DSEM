@@ -279,3 +279,21 @@ create.data.frame.from.results <- function(IG.data,DD.data){
   names(df) <- c("X","Y","Prior")
   return(df)
 }
+
+
+get.null.detection.rate <- function(results.file){
+  "Takes in a results file and returns the null null detection rates (as per McNeish)"
+  res <- readRDS(results.file)
+  a <- res[[1]]$BUGSoutput$summary[,c(3,7)]
+  lo <- a[,1]
+  up <- a[,2]
+  output <- (lo <= 0  & 0 <= up)
+  for (i in 2:length(res)){
+    a <- res[[i]]$BUGSoutput$summary[,c(3,7)]
+    lo <- a[,1]
+    up <- a[,2]
+    output <- Map(c,output,(lo <= 0  & 0 <= up))
+  }
+  
+  return(1-sapply(output,mean))
+}
