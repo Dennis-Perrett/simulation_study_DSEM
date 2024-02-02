@@ -1,4 +1,4 @@
-run.models <- function(reps = 5, model.file, N, NT) {
+run.models <- function(reps = 5, model.file, data.gen.fn, N, NT) {
   #params <- c("ly","ar.var","ar.mean")
   params <- c('alpha_var',
               'beta_var',
@@ -41,7 +41,7 @@ run.models <- function(reps = 5, model.file, N, NT) {
     
     # Generate data for the JAGS model
     #dat1 <- genData(N,NT,latent.ar.mean = c(0.2), latent.ar.var = diag(1)*0.5) # Example usage:
-    dat1 <- genDataMcNeish(N,NT)
+    dat1 <- data.gen.fn(N,NT)
     
     # Prepare data for JAGS
     data <- list(N = dim(dat1$Y)[1],
