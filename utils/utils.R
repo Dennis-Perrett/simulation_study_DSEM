@@ -51,7 +51,7 @@ run.models <- function(reps = 5, model.file, data.gen.fn, N, NT) {
                  W = dat1$W)
     
     # Run the JAGS model
-    res <- jags(data, parameters.to.save = params, model.file = model.file, n.chains = 2, n.iter = 2000,
+    res <- jags(data, parameters.to.save = params, model.file = model.file, n.chains = 2, n.iter = 5000,
                 n.burnin = 500, n.thin = 1)
     
     # Append the results to the list

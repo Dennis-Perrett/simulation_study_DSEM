@@ -17,10 +17,10 @@ mysterious.data <- function(N, Nt){
   X <- matrix(NA, nrow=N, ncol=Nt)
   
   for (i in 1:N){
-    alpha  <-       (0.5 * W1[i]) + (.3 * W2[i]) + rnorm(1,0, sd =sqrt(.3))
-    phi    <- 0.2 + (0.1 * W1[i]) + (.05 * W2[i]) + rnorm(1,0, sd =sqrt(.01))
-    beta   <- 0.7 + (0.3 * W1[i]) + (.2 * W2[i]) + rnorm(1,0, sd = sqrt(.5))
-    ln_var <-       (0.3 * W1[i]) + (.1 * W2[i]) + rnorm(1,0,sd = sqrt(.1))
+    alpha  <-       (5 * W1[i]) + (3 * W2[i]) + rnorm(1,0, sd =sqrt(4))
+    phi    <- 0.2 + (0.1 * W1[i]) + (.05 * W2[i]) + rnorm(1,0, sd =sqrt(0.01))
+    beta   <- 0.2 + (0.3 * W1[i]) + (.2 * W2[i]) + rnorm(1,0, sd = sqrt(0.05))
+    ln_var <-       (3 * W1[i]) + (7.5 * W2[i]) + rnorm(1,0,sd = sqrt(4))
     
     
     Yi <- rnorm(Nt+1,0,0)
