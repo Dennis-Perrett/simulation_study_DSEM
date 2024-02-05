@@ -1,0 +1,55 @@
+model {
+
+    # Hyperpriors for subject-specific random effects
+    obs_error ~ dgamma(0.05,0.05)
+    ar.prec ~ dgamma(0.01,0.01)
+    ar.mean ~ dnorm(0,0.00001)
+    
+    for (i in 1:N){
+      ar[i] ~ dnorm(ar.mean, ar.prec) # AR coefficient
+    }
+
+    tau ~ dgamma(0.001, 0.001)
+
+    # Prior for the latent factor
+    
+      for (i in 1:N) {
+          h[i, 1] ~ dnorm(0, 0.001)  # Assuming a normal distribution for the latent factor
+      }
+    
+
+    # Priors for regression parameters
+      ly[1] ~ dnorm(1,100000) # Fixing this to 1 for identification
+      ly[2] ~ dnorm(-1,100) # Fixing this to 1 for identification
+      ly[3] ~ dnorm(-2,100) # Fixing this to 1 for identification
+      #for (j in 2:J){ # for each item
+      #  ly[j] ~ dnorm(0, 0.001)  # Setting ly1 to zero #1
+    
+    #}
+
+    # Initialize observed variables
+    for (i in 1:N) { # For each person
+        # observed_data[i,T,j] # People, Time, Items
+        for (j in 1:J){ # For each item
+          observed_data[i, 1, j] ~ dnorm(ly[j] * h[i, 1], obs_error)
+        }
+    }
+
+    # Likelihood of observed variables given the latent factor and time dependency
+    for (t in 2:T) {
+        for (i in 1:N) {
+          for (j in 1:J){ # for each item
+        
+            observed_data[i, t, j] ~ dnorm(ly[j] * h[i, t] , obs_error)
+  
+            # Wellbeing is a AR
+            
+          }
+        h[i, t] ~ dnorm(ar[i] * t, tau)  
+        }
+        
+    }
+   
+   ar.var <- 1/ar.prec
+    
+}

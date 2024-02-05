@@ -1,0 +1,46 @@
+model {
+
+    # Primary Parameter Priors
+    
+    # Priors from the paper. Are equivalent to inv-gamma (-1,0)
+    
+    alpha_inv  ~ dgamma(2,0.3)#intercept
+    beta_inv   ~ dgamma(1.25, 0.25)
+    phi_inv    ~ dgamma(1,0.01)#time
+    ln_var_inv ~ dgamma(1.5,.2)#log
+    
+    alpha_var  <- 1/alpha_inv
+    beta_var   <- 1/beta_inv
+    phi_var    <- 1/phi_inv
+    ln_var_var <- 1/ln_var_inv
+    
+    # Priors from the paper
+    alpha_on_W1 ~ dnorm(0, 0.0000001)
+    alpha_on_W2 ~ dnorm(0, 0.0000001)
+    beta_on_W1  ~ dnorm(0, 0.0000001)
+    beta_on_W2  ~ dnorm(0, 0.0000001)
+    phi_on_W1   ~ dnorm(0, 0.0000001)
+    phi_on_W2   ~ dnorm(0, 0.0000001)
+    lnV_on_W1   ~ dnorm(0, 0.0000001)
+    lnV_on_W2   ~ dnorm(0, 0.0000001)
+    int_beta    ~ dnorm(0, 0.0000001)
+    int_phi     ~ dnorm(0, 0.0000001)
+    
+    
+    # For each Person
+    for (i in 1:N){
+    
+      alpha[i]  ~ dnorm(            (alpha_on_W1 * W[i,1]) + (alpha_on_W2 * W[i,2]), 1/alpha_var  )
+      beta[i]   ~ dnorm( int_beta + (beta_on_W1  * W[i,1]) + (beta_on_W2  * W[i,2]), 1/beta_var   ) 
+      phi[i]    ~ dnorm( int_phi  + (phi_on_W1   * W[i,1]) + (phi_on_W2   * W[i,2]), 1/phi_var    ) 
+      ln_var[i] ~ dnorm(            (lnV_on_W1   * W[i,1]) + (lnV_on_W2   * W[i,2]), 1/ln_var_var ) 
+      
+      for (t in 2:NT){
+        Y[i,t] ~ dnorm(alpha[i] + phi[i]*(Y[i,t-1]-alpha[i]) + beta[i]*X[i,t], 1/exp(ln_var[i]))
+      }
+    
+    }
+    
+}
+    
+   
