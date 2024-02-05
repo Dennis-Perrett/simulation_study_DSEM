@@ -4,10 +4,11 @@ model {
     
     # Priors from the paper. Are equivalent to inv-gamma (-1,0)
     
-    alpha_inv  ~ dgamma(2,0.3)#intercept
+  
+    alpha_inv  ~ dgamma(0.665,0.1665)#intercept
     beta_inv   ~ dgamma(1.25, 0.25)
-    phi_inv    ~ dgamma(1,0.01)#time
-    ln_var_inv ~ dgamma(1.5,.2)#log
+    phi_inv    ~ dgamma(0.225,0.1225)#time
+    ln_var_inv ~ dgamma(1,0.2)#log
     
     alpha_var  <- 1/alpha_inv
     beta_var   <- 1/beta_inv
