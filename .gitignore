@@ -1,4 +1,5 @@
 # Ignore files in directories starting with "results"
+results_cache.rda
 results*/
 
 *.rda
