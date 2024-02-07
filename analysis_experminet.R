@@ -17,7 +17,7 @@ pop.vals <- list(
   phi_on_W1 = 0.10,
   phi_on_W2 = 0.05,
   beta_on_W1 = 0.30,
-  beta_on_W2 = 0.40,
+  beta_on_W2 = 0.20,
   lnV_on_W1 = 3,
   lnV_on_W2 = 7.5,
   alpha_on_W1 = 5,
@@ -25,7 +25,7 @@ pop.vals <- list(
   int_beta = 0.2,
   int_phi= 0.2,
   alpha_var = 4,
-  beta_var = 0.5,
+  beta_var = 0.05,
   phi_var = 0.01,
   ln_var_var = 4
 )

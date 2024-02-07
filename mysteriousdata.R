@@ -1,4 +1,17 @@
-mysterious.data <- function(N, Nt){
+mysterious.data <- function(N, Nt, phi_on_W1 = 0.2,
+                            phi_on_W2 = 0.1,
+                            beta_on_W1 = 0.1,
+                            beta_on_W2 = 0.3,
+                            lnV_on_W1 = 0.2,
+                            lnV_on_W2 = 0.3,
+                            alpha_on_W1 = 0.6,
+                            alpha_on_W2 = 0.2,
+                            int_beta = 0.2,
+                            int_phi= 0.1,
+                            alpha_var = 0.4,
+                            beta_var = 0.3,
+                            phi_var = 0.03,
+                            ln_var_var = 0.2){
   #
   # Simulate the data from McNeish 2019
   # Intput: 
@@ -17,10 +30,10 @@ mysterious.data <- function(N, Nt){
   X <- matrix(NA, nrow=N, ncol=Nt)
   
   for (i in 1:N){
-    alpha  <-       (5 * W1[i]) + (3 * W2[i]) + rnorm(1,0, sd =sqrt(4))
-    phi    <- 0.2 + (0.1 * W1[i]) + (.05 * W2[i]) + rnorm(1,0, sd =sqrt(0.01))
-    beta   <- 0.2 + (0.3 * W1[i]) + (.2 * W2[i]) + rnorm(1,0, sd = sqrt(0.05))
-    ln_var <-       (3 * W1[i]) + (7.5 * W2[i]) + rnorm(1,0,sd = sqrt(4))
+    alpha  <-       (alpha_on_W1 * W1[i]) + (alpha_on_W2 * W2[i]) + rnorm(1,0, sd =sqrt(alpha_var))
+    phi    <- int_phi + (phi_on_W1 * W1[i]) + (phi_on_W2 * W2[i]) + rnorm(1,0, sd =sqrt(phi_var))
+    beta   <- int_beta + (beta_on_W1 * W1[i]) + (beta_on_W2 * W2[i]) + rnorm(1,0, sd = sqrt(beta_var))
+    ln_var <-       (lnV_on_W1 * W1[i]) + (lnV_on_W2 * W2[i]) + rnorm(1,0,sd = sqrt(ln_var_var))
     
     
     Yi <- rnorm(Nt+1,0,0)
