@@ -1,6 +1,6 @@
 rm(list=ls())
-#setwd("/Users/philippholscher/Downloads/simulation_study_DSEM-main")
-setwd("/Users/dennisperrett/Documents/Uni/Semester 5/Research Seminar/simulation_study_DSEM")
+setwd("/Users/philippholscher/Downloads/simulation_study_DSEM-main 7")
+#setwd("/Users/dennisperrett/Documents/Uni/Semester 5/Research Seminar/simulation_study_DSEM")
 
 
 
@@ -10,6 +10,7 @@ setwd("/Users/dennisperrett/Documents/Uni/Semester 5/Research Seminar/simulation
 ################################################################################
 source("utils/mysterious_vals.R")
 source("mysteriousdata.R")
+set.seed(1234)
 datmn <- mysterious.data(N=50,Nt=200, phi_on_W1 = pop.vals$phi_on_W1,
                          phi_on_W2 = pop.vals$phi_on_W2,
                          beta_on_W1 = pop.vals$beta_on_W1,
@@ -27,7 +28,51 @@ datmn <- mysterious.data(N=50,Nt=200, phi_on_W1 = pop.vals$phi_on_W1,
 
 datmn
 
+######### Intercept
+library(irr)
+icc_y = as.numeric(icc(datmn[["Y"]])['value'])
+estimated_variance_over_time=(var(datmn[['Y']][1,])+var(datmn[['Y']][2,])+var(datmn[['Y']][3,])+var(datmn[['Y']][4,])+var(datmn[['Y']][5,])+var(datmn[['Y']][6,])+var(datmn[['Y']][7,])+var(datmn[['Y']][8,])+var(datmn[['Y']][9,])+var(datmn[['Y']][10,])+var(datmn[['Y']][11,])+var(datmn[['Y']][12,])+var(datmn[['Y']][13,])+var(datmn[['Y']][14,])+var(datmn[['Y']][15,])+var(datmn[['Y']][16,])+var(datmn[['Y']][17,])+var(datmn[['Y']][18,])+var(datmn[['Y']][19,])+var(datmn[['Y']][20,]))/20
+estimated_variance_across_person=(var(datmn[['Y']][,1])+var(datmn[['Y']][,2])+var(datmn[['Y']][,3])+var(datmn[['Y']][,4])+var(datmn[['Y']][,5])+var(datmn[['Y']][,6])+var(datmn[['Y']][,7])+var(datmn[['Y']][,8])+var(datmn[['Y']][,9])+var(datmn[['Y']][,10])+var(datmn[['Y']][,11])+var(datmn[['Y']][,12])+var(datmn[['Y']][,13])+var(datmn[['Y']][,14])+var(datmn[['Y']][,15])+var(datmn[['Y']][,16])+var(datmn[['Y']][,17])+var(datmn[['Y']][,18])+var(datmn[['Y']][,19])+var(datmn[['Y']][,20]))/20
+total_variance = estimated_variance_across_person+estimated_variance_over_time
+print(total_variance*icc_y) #variance of intercept upper bound
 
+alpha = seq(0.50,0.75,0.005)
+beta = 0.1*+alpha +0.1
+
+int <- function(x)
+qinvgamma(x,shape=alpha[9],rate=beta[9])
+print(hdi(int))
+print(alpha[9])
+print(beta[9])
+#invgamma(0.54,0.154)
+######### Time varying
+print((0.5*100)^2)
+alpha_2 = seq(0.25,0.5,0.005)
+beta_2= 0.1*+alpha_2 +0.1
+int <- function(x)
+qinvgamma(x,shape=alpha_2[14],rate=beta_2[14])
+print(hdi(int))
+print(alpha_2[14])
+print(beta_2[14])
+#invgamme(0.315,0.1315)
+
+######### log_error
+print((1-icc_y)*total_variance)
+avg_res_variance = (1-icc_y)*total_variance
+log_avg_res_variance = log((1-icc_y)*total_variance)
+up_bound =avg_res_variance*10
+log_up_bound = log(up_bound)
+variance_error = 0.5*(log_up_bound-log_avg_res_variance)^2
+
+alpha_3 = seq(1,1.25,0.005)
+beta_3= 0.1*+alpha_3 +0.1
+int <- function(x)
+qinvgamma(x,shape=alpha_3[30],rate=beta_3[30])
+print(hdi(int))
+print(alpha_3[30])
+print(beta_3[30])
+
+#invgamma(1.145,0.2145)
 
 
 ################################################################################
@@ -152,7 +197,7 @@ datmn <- mysterious.data(N=50,Nt=200, phi_on_W1 = pop.vals$phi_on_W1,
                          beta_var = pop.vals$beta_var,
                          phi_var = pop.vals$phi_var,
                          ln_var_var = pop.vals$ln_var_var
-                         
+
 )
 data <- list(N = dim(datmn$Y)[1],
              NT = dim(datmn$Y)[2],
@@ -195,7 +240,7 @@ datmysterious
 # Once, quickly (with the understanding you have right now!)
 # Then do it again, using the paper as a reference until you've cracked it!
 
-# Be aware, I had to increase the iterations from 2000 for convergence. 
+# Be aware, I had to increase the iterations from 2000 for convergence.
 # Expect a run through of 5 "run.models" to take between 4 to 6 hours
 
 # Lazy Priors

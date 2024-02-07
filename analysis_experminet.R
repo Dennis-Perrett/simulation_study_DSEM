@@ -1,5 +1,5 @@
 # --------------------------------------------------------------------------- #
-# Analysis of results of the simulation study. Requires running of 
+# Analysis of results of the simulation study. Requires running of
 # data_simulation_no_ar.R (may get renamed!)
 # --------------------------------------------------------------------------- #
 setwd("/Users/philippholscher/Downloads/simulation_study_DSEM-main")
@@ -31,9 +31,9 @@ pop.vals <- list(
 )
 
 # Calculate the non-null detection rate. Requires the use of the actual results
-# Method is visible in the utils file. Ultimately, it takes in the 2.5 and 97.5 
+# Method is visible in the utils file. Ultimately, it takes in the 2.5 and 97.5
 # plausible interval ranges and checks to see if 0 is between these.
-(nndr_philipp_IG_10 <- get.null.detection.rate("results/Model_PHILIPP_CUSTOM_PRIORS_EXACT/results_10_100.rds"))  
+(nndr_philipp_IG_10 <- get.null.detection.rate("results/Model_PHILIPP_CUSTOM_PRIORS_EXACT/results_10_100.rds"))
 (nndr_philipp_DD_10 <- get.null.detection.rate("results/Model_PHILIPP_DD/results_10_100.rds"))
 (nndr_philipp_IG_20 <- get.null.detection.rate("results/Model_PHILIPP_CUSTOM_PRIORS_EXACT/results_20_100.rds"))
 (nndr_philipp_DD_20 <- get.null.detection.rate("results/Model_PHILIPP_DD/results_20_100.rds"))
@@ -67,9 +67,9 @@ round(nndr.table[c("phi_on_W1",
                    "alpha_on_W1",
                    "alpha_on_W2"),]*100)
 # Note: ARR = Admissible-Range-Restricted, DD = Default Diffuse. Cell values
-# represent percentages. The variance terms are not included because their 
-# definition is not consistent with the aim of the non-null detection rate. 
-# Variances are bounded below by 0, so their credible intervals necessarily do 
+# represent percentages. The variance terms are not included because their
+# definition is not consistent with the aim of the non-null detection rate.
+# Variances are bounded below by 0, so their credible intervals necessarily do
 # not include 0, and the non-null rate would uniformly be 100.
 
 # Only needs to be run after fitting models.
@@ -83,20 +83,20 @@ round(nndr.table[c("phi_on_W1",
   #mean_30_100_philipp_DD <- extract.params3("results/Model_PHILIPP_DD/results_30_100.rds","mean")
   #mean_40_100_philipp_DD <- extract.params3("results/Model_PHILIPP_DD/results_40_100.rds","mean")
   #mean_50_100_philipp_DD <- extract.params3("results/Model_PHILIPP_DD/results_50_100.rds","mean")
-  
+
   #mean_10_100_philipp_IG <- extract.params3("results/Model_PHILIPP_CUSTOM_PRIORS_EXACT/results_10_100.rds","mean")
   #mean_20_100_philipp_IG <- extract.params3("results/Model_PHILIPP_CUSTOM_PRIORS_EXACT/results_20_100.rds","mean")
   #mean_30_100_philipp_IG <- extract.params3("results/Model_PHILIPP_CUSTOM_PRIORS_EXACT/results_30_100.rds","mean")
   #mean_40_100_philipp_IG <- extract.params3("results/Model_PHILIPP_CUSTOM_PRIORS_EXACT/results_40_100.rds","mean")
   #mean_50_100_philipp_IG <- extract.params3("results/Model_PHILIPP_CUSTOM_PRIORS_EXACT/results_50_100.rds","mean")
-  
-  
+
+
   #saveRDS(mean_10_100_philipp_DD, "simulation_means/mean_10_100_philipp_DD.rds")
   #saveRDS(mean_20_100_philipp_DD, "simulation_means/mean_20_100_philipp_DD.rds")
   #saveRDS(mean_30_100_philipp_DD, "simulation_means/mean_30_100_philipp_DD.rds")
   #saveRDS(mean_40_100_philipp_DD, "simulation_means/mean_40_100_philipp_DD.rds")
   #saveRDS(mean_50_100_philipp_DD, "simulation_means/mean_50_100_philipp_DD.rds")
-  
+
   #saveRDS(mean_10_100_philipp_IG, "simulation_means/mean_10_100_philipp_IG.rds")
   #saveRDS(mean_20_100_philipp_IG, "simulation_means/mean_20_100_philipp_IG.rds")
   #saveRDS(mean_30_100_philipp_IG, "simulation_means/mean_30_100_philipp_IG.rds")
@@ -108,7 +108,7 @@ round(nndr.table[c("phi_on_W1",
 mean_10_100_philipp_DD <- readRDS("simulation_means/mean_10_100_philipp_DD.rds")
 mean_20_100_philipp_DD <- readRDS("simulation_means/mean_20_100_philipp_DD.rds")
 mean_30_100_philipp_DD <- readRDS("simulation_means/mean_30_100_philipp_DD.rds")
-mean_40_100_philpp_DD <- readRDS("simulation_means/mean_40_100_philipp_DD.rds")
+mean_40_100_philipp_DD <- readRDS("simulation_means/mean_40_100_philipp_DD.rds")
 mean_50_100_philipp_DD <- readRDS("simulation_means/mean_50_100_philipp_DD.rds")
 
 mean_10_100_philipp_IG <- readRDS("simulation_means/mean_10_100_philipp_IG.rds")
@@ -164,3 +164,5 @@ df.lnV <- create.data.frame.from.results(rel.bias.IG.lnV_var, rel.bias.DD.lnV_va
 
 # Plot all 4 together in a grid for final figure
 grid.arrange(p1, p2, p3, p4, ncol = 2)
+
+
