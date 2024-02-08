@@ -183,7 +183,7 @@ params <- c('alpha_var',
 
 source("utils/mysterious_vals.R")
 source("mysteriousdata.R")
-datmn <- mysterious.data(N=50,Nt=200, phi_on_W1 = pop.vals$phi_on_W1,
+datmn <- mysterious.data(N=50,Nt=100, phi_on_W1 = pop.vals$phi_on_W1,
                          phi_on_W2 = pop.vals$phi_on_W2,
                          beta_on_W1 = pop.vals$beta_on_W1,
                          beta_on_W2 = pop.vals$beta_on_W2,
@@ -206,7 +206,7 @@ data <- list(N = dim(datmn$Y)[1],
              W = datmn$W)
 
 # Test model fit etc
-fit.mn <- jags(data,  parameters.to.save=params, model.file="models/model_MN.txt", n.chains=2, n.iter=2000,
+fit.mn <- jags(data,  parameters.to.save=params, model.file="models/Model_PHILIPP_DD.txt", n.chains=2, n.iter=2000,
                n.burnin = 500, n.thin=1)
 
 fit.mn
@@ -226,7 +226,7 @@ fit.mn2
 # Update model.file as necessary
 #
 # Run this section only once!
-run.models(reps=200, model.file = "models/Model_PHILIPP_CUSTOM_PRIORS_EXACT.txt", data.gen.fn = mysterious.data ,N=10,NT=100)
+run.models(reps=200, model.file = "models/Model_PHILIPP_DD.txt", data.gen.fn = mysterious.data ,N=10,NT=100)
 run.models(reps=200, model.file = "models/Model_PHILIPP_DD.txt", data.gen.fn = mysterious.data ,N=20,NT=100)
 run.models(reps=200, model.file = "models/Model_PHILIPP_DD.txt", data.gen.fn = mysterious.data ,N=30,NT=100)
 run.models(reps=200, model.file = "models/Model_PHILIPP_DD.txt", data.gen.fn = mysterious.data ,N=40,NT=100)
@@ -242,21 +242,26 @@ datmysterious
 
 # Be aware, I had to increase the iterations from 2000 for convergence.
 # Expect a run through of 5 "run.models" to take between 4 to 6 hours
-
+source("utils/mysterious_vals.R")
+source("utils/utils.R")
+source("mysteriousdata.R")
 # Lazy Priors
-run.models(reps=200, model.file = "models/Model_PHILIPP_CUSTOM_PRIORS.txt", data.gen.fn = mysterious.data ,N=10,NT=100)
-run.models(reps=200, model.file = "models/Model_PHILIPP_CUSTOM_PRIORS.txt", data.gen.fn = mysterious.data ,N=20,NT=100)
-run.models(reps=200, model.file = "models/Model_PHILIPP_CUSTOM_PRIORS.txt", data.gen.fn = mysterious.data ,N=30,NT=100)
-run.models(reps=200, model.file = "models/Model_PHILIPP_CUSTOM_PRIORS.txt", data.gen.fn = mysterious.data ,N=40,NT=100)
-run.models(reps=200, model.file = "models/Model_PHILIPP_CUSTOM_PRIORS.txt", data.gen.fn = mysterious.data ,N=50,NT=100)
+run.models(reps=200, model.file = "Model_experiment_model.txt", data.gen.fn = mysterious.data ,N=10,NT=100)
+run.models(reps=200, model.file = "Model_experiment_model.txt", data.gen.fn = mysterious.data ,N=20,NT=100)
+run.models(reps=200, model.file = "Model_experiment_model.txt", data.gen.fn = mysterious.data ,N=30,NT=100)
+run.models(reps=200, model.file = "Model_experiment_model.txt", data.gen.fn = mysterious.data ,N=40,NT=100)
+run.models(reps=200, model.file = "Model_experiment_model.txt", data.gen.fn = mysterious.data ,N=50,NT=100)
+
 
 # Exact priors!
-run.models(reps=200, model.file = "models/Model_PHILIPP_CUSTOM_PRIORS_EXACT.txt", data.gen.fn = mysterious.data ,N=10,NT=100)
-run.models(reps=200, model.file = "models/Model_PHILIPP_CUSTOM_PRIORS_EXACT.txt", data.gen.fn = mysterious.data ,N=20,NT=100)
-run.models(reps=200, model.file = "models/Model_PHILIPP_CUSTOM_PRIORS_EXACT.txt", data.gen.fn = mysterious.data ,N=30,NT=100)
-run.models(reps=200, model.file = "models/Model_PHILIPP_CUSTOM_PRIORS_EXACT.txt", data.gen.fn = mysterious.data ,N=40,NT=100)
-run.models(reps=200, model.file = "models/Model_PHILIPP_CUSTOM_PRIORS_EXACT.txt", data.gen.fn = mysterious.data ,N=50,NT=100)
+run.models(reps=200, model.file = "models/model_PHILIPP_DD.txt", data.gen.fn = mysterious.data ,N=10,NT=100)
+run.models(reps=200, model.file = "models/model_PHILIPP_DD.txt", data.gen.fn = mysterious.data ,N=20,NT=100)
+run.models(reps=200, model.file = "models/model_PHILIPP_DD.txt", data.gen.fn = mysterious.data ,N=30,NT=100)
+run.models(reps=200, model.file = "models/model_PHILIPP_DD.txt", data.gen.fn = mysterious.data ,N=40,NT=100)
+run.models(reps=200, model.file = "models/model_PHILIPP_DD.txt", data.gen.fn = mysterious.data ,N=50,NT=100)
 
 # Once you get here, refer to analysis2.R for further analysis (plots etc)
 
 
+check.status("results/Model_experiment_model")
+check.status("results/model_PHILIPP_DD")

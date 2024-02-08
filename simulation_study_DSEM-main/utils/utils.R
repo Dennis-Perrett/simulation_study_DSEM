@@ -1,4 +1,22 @@
 run.models <- function(reps = 5, model.file, data.gen.fn, N, NT) {
+  
+  pop.vals2 <- list(
+    phi_on_W1 = 0.1, #
+    phi_on_W2 = 0.2, #
+    beta_on_W1 = 0.4, # 
+    beta_on_W2 = 0.3, #
+    lnV_on_W1 = 1, #
+    lnV_on_W2 = 1, #
+    alpha_on_W1 = 5, #
+    alpha_on_W2 = 3, #
+    int_beta = 5, #
+    int_phi= 0.2, #
+    alpha_var = 2, #
+    beta_var = 0.6, #
+    phi_var = 0.02, #
+    ln_var_var = 1 #
+  )
+  
   #params <- c("ly","ar.var","ar.mean")
   params <- c('alpha_var',
               'beta_var',
@@ -41,21 +59,36 @@ run.models <- function(reps = 5, model.file, data.gen.fn, N, NT) {
     
     # Generate data for the JAGS model
     #dat1 <- genData(N,NT,latent.ar.mean = c(0.2), latent.ar.var = diag(1)*0.5) # Example usage:
-    dat1 <- data.gen.fn(N,NT)
+    dat2 <- mysterious.data(N,NT , phi_on_W1 = pop.vals2$phi_on_W1,
+                    phi_on_W2 = pop.vals2$phi_on_W2,
+                    beta_on_W1 = pop.vals2$beta_on_W1,
+                    beta_on_W2 = pop.vals2$beta_on_W2,
+                    lnV_on_W1 = pop.vals2$lnV_on_W1,
+                    lnV_on_W2 = pop.vals2$lnV_on_W2,
+                    alpha_on_W1 = pop.vals2$alpha_on_W1,
+                    alpha_on_W2 = pop.vals2$alpha_on_W2,
+                    int_beta = pop.vals2$int_beta,
+                    int_phi = pop.vals2$int_phi,
+                    alpha_var = pop.vals2$alpha_var,
+                    beta_var = pop.vals2$beta_var,
+                    phi_var = pop.vals2$phi_var,
+                    ln_var_var = pop.vals2$ln_var_var
+                    
+    )
     
     # Prepare data for JAGS
-    data <- list(N = dim(dat1$Y)[1],
-                 NT = dim(dat1$Y)[2],
-                 X = dat1$X,
-                 Y = dat1$Y,
-                 W = dat1$W)
+    data <- list(N = dim(dat2$Y)[1],
+                 NT = dim(dat2$Y)[2],
+                 X = dat2$X,
+                 Y = dat2$Y,
+                 W = dat2$W)
     
     # Run the JAGS model
-    res <- jags(data, parameters.to.save = params, model.file = model.file, n.chains = 2, n.iter = 5000,
+    SIM.RES <- jags(data, parameters.to.save = params, model.file = model.file, n.chains = 2, n.iter = 2000,
                 n.burnin = 500, n.thin = 1)
     
     # Append the results to the list
-    list.to.save.to <- c(list.to.save.to, list(res))
+    list.to.save.to <- c(list.to.save.to, list(SIM.RES))
     
     # Save progress every 5 iterations
     if ((i %% 50) == 0) {

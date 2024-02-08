@@ -1,17 +1,17 @@
-mysterious.data <- function(N, Nt, phi_on_W1 = 0.2,
-                            phi_on_W2 = 0.1,
-                            beta_on_W1 = 0.1,
-                            beta_on_W2 = 0.3,
-                            lnV_on_W1 = 0.2,
-                            lnV_on_W2 = 0.3,
-                            alpha_on_W1 = 0.6,
-                            alpha_on_W2 = 0.2,
-                            int_beta = 0.2,
-                            int_phi= 0.1,
-                            alpha_var = 0.4,
-                            beta_var = 0.3,
-                            phi_var = 0.03,
-                            ln_var_var = 0.2){
+mysterious.data <- function(N, Nt, phi_on_W1,
+                            phi_on_W2,
+                            beta_on_W1,
+                            beta_on_W2,
+                            lnV_on_W1,
+                            lnV_on_W2,
+                            alpha_on_W1,
+                            alpha_on_W2,
+                            int_beta,
+                            int_phi,
+                            alpha_var,
+                            beta_var,
+                            phi_var,
+                            ln_var_var){
   #
   # Simulate the data from McNeish 2019
   # Intput: 
